@@ -19,7 +19,7 @@ jobs:
       iteration_id: ${{ steps.hcp.outputs.iteration_id }}
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
@@ -60,6 +60,7 @@ jobs:
         uses: actions/checkout@v3
         with:
           repository: troyfluegge/terraform-myapp
+          path: terraform-myapp
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
@@ -74,12 +75,12 @@ jobs:
           terraform_wrapper: false
 
       - name: Terraform Init
-        working-directory: ./terraform
+        working-directory: ./terraform-myapp
         run: terraform init
 
       - name: Create Ephemeral Infrastructure
         id: tf_apply
-        working-directory: ./terraform
+        working-directory: ./terraform-myapp
         run: |
           terraform apply -auto-approve -var="iteration_id=${{ needs.build.outputs.iteration_id }}" -var="prefix=e2e-test"
           health_endpoint="$(terraform output -raw health_endpoint)"
@@ -90,7 +91,7 @@ jobs:
 
       - name: Clean Up Testing Infrastructure
         if: always() # always run cleanup steps, regardless of E2E test outcomes
-        working-directory: ./terraform
+        working-directory: ./terraform-myapp
         run: terraform destroy -auto-approve -var="iteration_id=${{ needs.build.outputs.iteration_id }}" -var="prefix=e2e-test"
 
   promote-dev-staging:
@@ -99,7 +100,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Promote Iteration to Dev
         working-directory: .github/scripts
@@ -116,7 +117,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Promote Iteration to Prod
         working-directory: .github/scripts
