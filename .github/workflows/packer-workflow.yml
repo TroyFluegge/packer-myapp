@@ -58,8 +58,8 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v3
-          name: troyfluegge/terraform-myapp
-          ref: 'master'
+        with:
+          repository: troyfluegge/terraform-myapp
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
