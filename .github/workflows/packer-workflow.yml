@@ -86,7 +86,7 @@ jobs:
           health_endpoint="$(terraform output -raw health_endpoint)"
           echo "::set-output name=health_endpoint::${health_endpoint}"
       - name: Invoke E2E Test
-        working-directory: ./.github/scripts
+        working-directory: ../packer-myapp/.github/scripts
         run: ./e2e_test.sh "${{ steps.tf_apply.outputs.health_endpoint }}"
 
       - name: Clean Up Testing Infrastructure
