@@ -38,7 +38,9 @@ build {
     }
 
     build_labels = {
-      "build-time" = timestamp(),
+      "build-time" = timestamp()
+      "operating-system" = "Ubuntu"
+      "operating-system-release" = "22.04"
     }
   }
 
