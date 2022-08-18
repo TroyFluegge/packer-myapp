@@ -12,6 +12,22 @@ packer {
   }
 }
 
+variable "subscription_id" {
+    type        = string
+    sensitive   = true
+}
+
+variable "client_id" {
+    type        = string
+    sensitive   = true
+}
+
+variable "client_secret" {
+    type        = string
+    sensitive   = true
+}
+
+
 data "amazon-ami" "base_image" {
   region = "us-east-2"
   filters = {
@@ -40,27 +56,32 @@ source "azure-arm" "myapp" {
   managed_image_resource_group_name = "hcp_packer_demo_app"
   os_type                           = "Linux"
   vm_size                           = "Standard_DS2_v2"
+  subscription_id                   = var.subscription_id
+  client_id                         = var.client_id
+  client_secret                     = var.client_secret
 }
 
 build {
-  hcp_packer_registry {
-    bucket_name = "hcp-packer-myapp"
-    description = "Simple static website"
+    hcp_packer_registry {
+      bucket_name = "hcp-packer-myapp"
+      description = "Simple static website"
 
-    bucket_labels = {
-      "Team"  = "MyAppTeam"
-      "Owner" = "Troy Fluegge"
-    }
+      bucket_labels = {
+        "Team"  = "MyAppTeam"
+        "Owner" = "Troy Fluegge"
+      }
 
-    build_labels = {
-      "build-time" = timestamp()
-      "operating-system" = "Ubuntu"
-      "operating-system-release" = "22.04"
+      build_labels = {
+        "build-time" = timestamp()
+        "operating-system" = "Ubuntu"
+        "operating-system-release" = "22.04"
+      }
     }
-  }
 
   sources = ["source.amazon-ebs.myapp",
              "source.azure-arm.myapp"]
+
+  sources = ["source.azure-arm.myapp"]
 
   // Copy binary to tmp
   provisioner "file" {
