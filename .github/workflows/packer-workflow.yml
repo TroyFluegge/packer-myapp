@@ -10,10 +10,9 @@ env:
   HCP_PROJECT_ID: ${{ secrets.HCP_PROJECT_ID }}
   HCP_CLIENT_ID: ${{ secrets.HCP_CLIENT_ID }}
   HCP_CLIENT_SECRET: ${{ secrets.HCP_CLIENT_SECRET }}
-  ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
-  ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
-  ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-  ARM_CLIENT_SECRET: ${{ secrets.AZURE_SECRET_ID }}
+  PKR_VAR_client_id: ${{ secrets.PKR_VAR_CLIENT_ID }}
+  PKR_VAR_subscription_id: ${{ secrets.PKR_VAR_SUBSCRIPTION_ID }}
+  PKR_VAR_client_secret: ${{ secrets.PKR_VAR_CLIENT_SECRET }}
 
 jobs:
   build:
