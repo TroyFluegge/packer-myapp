@@ -5,6 +5,10 @@ packer {
       version = ">= 1.0.3"
       source  = "github.com/hashicorp/amazon"
     }
+    azure = {
+      version = ">= 1.3.0"
+      source  = "github.com/hashicorp/azure"
+    }
   }
 }
 
@@ -27,6 +31,17 @@ source "amazon-ebs" "myapp" {
   ami_name       = "hcp_packer_demo_app_{{timestamp}}"
 }
 
+source "azure-arm" "myapp" {
+  image_offer                       = "UbuntuServer"
+  image_publisher                   = "Canonical"
+  image_sku                         = "16.04-LTS"
+  location                          = "East US"
+  managed_image_name                = "hcp_packer_demo_app_{{timestamp}}"
+  managed_image_resource_group_name = "hcp_packer_demo_app"
+  os_type                           = "Linux"
+  vm_size                           = "Standard_DS2_v2"
+}
+
 build {
   hcp_packer_registry {
     bucket_name = "hcp-packer-myapp"
@@ -44,7 +59,8 @@ build {
     }
   }
 
-  sources = ["source.amazon-ebs.myapp"]
+  sources = ["source.amazon-ebs.myapp",
+             "source.azure-arm.myapp"]
 
   // Copy binary to tmp
   provisioner "file" {
