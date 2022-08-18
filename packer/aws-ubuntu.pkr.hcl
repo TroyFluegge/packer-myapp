@@ -81,8 +81,6 @@ build {
   sources = ["source.amazon-ebs.myapp",
              "source.azure-arm.myapp"]
 
-  sources = ["source.azure-arm.myapp"]
-
   // Copy binary to tmp
   provisioner "file" {
     source      = "../bin/server"
