@@ -80,11 +80,6 @@ build {
       bucket_name = "hcp-packer-myapp"
       description = "Simple static website"
 
-      # bucket_labels = {
-      #   "Team"  = "MyAppTeam"
-      #   "Owner" = "Troy Fluegge"
-      # }
-
       bucket_labels = var.default_base_tags
 
       build_labels = {
