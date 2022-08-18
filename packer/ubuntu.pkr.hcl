@@ -27,6 +27,14 @@ variable "client_secret" {
     sensitive   = true
 }
 
+variable "default_base_tags" {
+  description = "Required tags for the environment"
+  type        = map(string)
+  default = {
+    owner   = "SRE Team"
+    contact = "sre@mydomain.com"
+  }
+}
 
 data "amazon-ami" "base_image" {
   region = "us-east-2"
@@ -45,6 +53,9 @@ source "amazon-ebs" "myapp" {
   ssh_username   = "ubuntu"
   ssh_agent_auth = false
   ami_name       = "hcp_packer_demo_app_{{timestamp}}"
+  tags = merge(var.default_base_tags, {
+    SourceAMIName = "{{ .SourceAMIName }}"
+  })
 }
 
 source "azure-arm" "myapp" {
@@ -59,6 +70,9 @@ source "azure-arm" "myapp" {
   subscription_id                   = var.subscription_id
   client_id                         = var.client_id
   client_secret                     = var.client_secret
+  azure_tags = merge(var.default_base_tags, {
+    MyTags = "MyAzureTags"
+  })
 }
 
 build {
@@ -66,10 +80,12 @@ build {
       bucket_name = "hcp-packer-myapp"
       description = "Simple static website"
 
-      bucket_labels = {
-        "Team"  = "MyAppTeam"
-        "Owner" = "Troy Fluegge"
-      }
+      # bucket_labels = {
+      #   "Team"  = "MyAppTeam"
+      #   "Owner" = "Troy Fluegge"
+      # }
+
+      bucket_labels = var.default_base_tags
 
       build_labels = {
         "build-time" = timestamp()
