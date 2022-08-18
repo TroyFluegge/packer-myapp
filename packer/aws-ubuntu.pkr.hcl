@@ -48,9 +48,9 @@ source "amazon-ebs" "myapp" {
 }
 
 source "azure-arm" "myapp" {
-  image_offer                       = "UbuntuServer"
+  image_offer                       = "0001-com-ubuntu-server-jammy"
   image_publisher                   = "Canonical"
-  image_sku                         = "16.04-LTS"
+  image_sku                         = "22_04-lts"
   location                          = "East US"
   managed_image_name                = "hcp_packer_demo_app_{{timestamp}}"
   managed_image_resource_group_name = "hcp_packer_demo_app"
