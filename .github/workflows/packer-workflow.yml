@@ -24,11 +24,6 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v3
 
-#      - name: Log in with Azure
-#        uses: azure/login@v1
-#        with:
-#         creds: '${{ secrets.AZURE_CREDENTIALS }}'
-
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
@@ -59,7 +54,7 @@ jobs:
           iteration_id=$(echo "$build" | jq -r '.custom_data.iteration_id')
           echo "::set-output name=iteration_id::$iteration_id"
 
-  test:
+  test-aws:
     name: E2E Testing
     needs: build
     runs-on: ubuntu-latest
@@ -72,8 +67,8 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v3
         with:
-          repository: troyfluegge/terraform-myapp
-          path: terraform-myapp
+          repository: troyfluegge/aws-myapp
+          path: aws-myapp
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
@@ -88,12 +83,12 @@ jobs:
           terraform_wrapper: false
 
       - name: Terraform Init
-        working-directory: ./terraform-myapp
+        working-directory: ./aws-myapp
         run: terraform init
 
       - name: Create Ephemeral Infrastructure
         id: tf_apply
-        working-directory: ./terraform-myapp
+        working-directory: ./aws-myapp
         run: |
           terraform apply -auto-approve -var="iteration_id=${{ needs.build.outputs.iteration_id }}" -var="prefix=e2e-test"
           health_endpoint="$(terraform output -raw health_endpoint)"
@@ -104,7 +99,48 @@ jobs:
 
       - name: Clean Up Testing Infrastructure
         if: always() # always run cleanup steps, regardless of E2E test outcomes
-        working-directory: ./terraform-myapp
+        working-directory: ./aws-myapp
+        run: terraform destroy -auto-approve -var="iteration_id=${{ needs.build.outputs.iteration_id }}" -var="prefix=e2e-test"
+
+  test-azure:
+    name: E2E Testing
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+        with:
+          path: packer-myapp
+
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+        with:
+          repository: troyfluegge/azure-myapp
+          path: azure-myapp
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v1
+        with:
+          terraform_wrapper: false
+
+      - name: Terraform Init
+        working-directory: ./azure-myapp
+        run: terraform init
+
+      - name: Create Ephemeral Infrastructure
+        id: tf_apply
+        working-directory: ./azure-myapp
+        run: |
+          terraform apply -auto-approve -var="iteration_id=${{ needs.build.outputs.iteration_id }}" -var="prefix=e2e-test"
+          health_endpoint="$(terraform output -raw health_endpoint)"
+          echo "::set-output name=health_endpoint::${health_endpoint}"
+      - name: Invoke E2E Test
+        working-directory: ./packer-myapp/.github/scripts
+        run: ./e2e_test.sh "${{ steps.tf_apply.outputs.health_endpoint }}"
+
+      - name: Clean Up Testing Infrastructure
+        if: always() # always run cleanup steps, regardless of E2E test outcomes
+        working-directory: ./azure-myapp
         run: terraform destroy -auto-approve -var="iteration_id=${{ needs.build.outputs.iteration_id }}" -var="prefix=e2e-test"
 
   promote-dev-staging:
