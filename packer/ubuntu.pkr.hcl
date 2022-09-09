@@ -86,7 +86,7 @@ build {
         "build-time" = timestamp()
         "operating-system" = "Ubuntu"
         "operating-system-release" = "22.04"
-        "owner" = "Troy"
+        #"owner" = "Troy"
       }
     }
 
