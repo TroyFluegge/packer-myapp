@@ -13,6 +13,9 @@ env:
   PKR_VAR_client_id: ${{ secrets.PKR_VAR_CLIENT_ID }}
   PKR_VAR_subscription_id: ${{ secrets.PKR_VAR_SUBSCRIPTION_ID }}
   PKR_VAR_client_secret: ${{ secrets.PKR_VAR_CLIENT_SECRET }}
+  ARM_CLIENT_ID: ${{ secrets.PKR_VAR_CLIENT_ID }}
+  ARM_SUBSCRIPTION_ID: ${{ secrets.PKR_VAR_SUBSCRIPTION_ID }}
+  ARM_CLIENT_SECRET: ${{ secrets.PKR_VAR_CLIENT_SECRET }}
   TF_VAR_admin_username: ${{ secrets.TF_VAR_ADMIN_USERNAME }}
   TF_VAR_admin_password: ${{ secrets.TF_VAR_ADMIN_PASSWORD }}
 
