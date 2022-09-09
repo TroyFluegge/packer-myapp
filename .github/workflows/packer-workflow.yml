@@ -145,7 +145,7 @@ jobs:
 
   promote-dev-staging:
     name: Promote to Dev and Staging Channels
-    needs: ['build', 'aws-test', 'azure-test'] # this will automatically be skipped if the test job fails
+    needs: ['build', 'test-aws', 'test-azure'] # this will automatically be skipped if the test job fails
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
@@ -161,7 +161,7 @@ jobs:
 
   promote-prod:
     name: Promote to Production
-    needs: ['build', 'aws-test', 'azure-test', 'promote-dev-staging']
+    needs: ['build', 'test-aws', 'test-azure', 'promote-dev-staging']
     environment: production # requires approval
     runs-on: ubuntu-latest
     steps:
