@@ -10,7 +10,7 @@ func main() {
 	log.Print("Starting up!")
 
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprint(w, "Hello world! v7.2")
+		fmt.Fprint(w, "Hello world! v7.3")
 	})
 
 	// a truly basic health endpoint
