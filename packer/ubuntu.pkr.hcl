@@ -37,7 +37,7 @@ variable "default_base_tags" {
 }
 
 data "amazon-ami" "base_image" {
-  region = "us-east-2"
+  region = "us-east-1"
   filters = {
     name             = "ubuntu/images/hvm-ssd/ubuntu-jammy-22.04-amd64-server-*"
     root-device-type = "ebs"
@@ -47,7 +47,7 @@ data "amazon-ami" "base_image" {
 }
 
 source "amazon-ebs" "myapp" {
-  region         = "us-east-2"
+  region         = "us-east-1"
   source_ami     = data.amazon-ami.base_image.id
   instance_type  = "t2.nano"
   ssh_username   = "ubuntu"
