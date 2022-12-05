@@ -63,8 +63,8 @@ source "azure-arm" "myapp" {
   image_publisher                   = "Canonical"
   image_sku                         = "22_04-lts"
   location                          = "East US"
-  managed_image_name                = "hcp_packer_demo_app_{{timestamp}}"
-  managed_image_resource_group_name = "hcp_packer_demo_app"
+  #managed_image_name                = "hcp_packer_demo_app_{{timestamp}}"
+  #managed_image_resource_group_name = "hcp_packer_demo_app"
   os_type                           = "Linux"
   vm_size                           = "Standard_DS2_v2"
   subscription_id                   = var.subscription_id
