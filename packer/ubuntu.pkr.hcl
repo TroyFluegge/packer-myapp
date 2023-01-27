@@ -94,14 +94,14 @@ build {
              "source.azure-arm.myapp"]
 
   // Copy binary to tmp
-  # provisioner "file" {
-  #   source      = "../bin/server"
-  #   destination = "/tmp/"
-  # }
+  provisioner "file" {
+    source      = "../bin/server"
+    destination = "/tmp/"
+  }
 
-  # provisioner "shell" {
-  #   script = "./scripts/setup.sh"
-  # }
+  provisioner "shell" {
+    script = "./scripts/setup.sh"
+  }
 
   post-processor "manifest" {
     output     = "packer_manifest.json"
