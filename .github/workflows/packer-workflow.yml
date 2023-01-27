@@ -56,10 +56,9 @@ jobs:
         working-directory: ./packer
         run: |
           last_run_uuid=$(jq -r '.last_run_uuid' "./packer_manifest.json")
-          build=$(jq -r '.builds[] | select(.packer_run_uuid == "'"$last_run_uuid"'")' "./packer_manifest.json")
+          build=$(jq -r '.builds[0] | select(.packer_run_uuid == "'"$last_run_uuid"'")' "./packer_manifest.json")
           iteration_id=$(echo "$build" | jq -r '.custom_data.iteration_id')
           echo "iteration_id"=$iteration_id >> $GITHUB_OUTPUT
-          cat ./packer_manifest.json
 
   test-aws:
     name: AWS E2E Testing
