@@ -98,8 +98,7 @@ jobs:
         run: |
           terraform apply -auto-approve -var="iteration_id=${{ needs.build.outputs.iteration_id }}" -var="prefix=e2e-test"
           health_endpoint="$(terraform output -raw health_endpoint)"
-          #echo "::set-output name=health_endpoint::${health_endpoint}"
-          echo "{health_endpoint}={$health_endpoint}" >> $GITHUB_OUTPUT
+          echo "health_endpoint"=$health_endpoint >> $GITHUB_OUTPUT
       - name: Invoke E2E Test
         working-directory: ./packer-myapp/.github/scripts
         run: ./e2e_test.sh "${{ steps.tf_apply.outputs.health_endpoint }}"
@@ -140,8 +139,7 @@ jobs:
         run: |
           terraform apply -auto-approve -var="iteration_id=${{ needs.build.outputs.iteration_id }}" -var="prefix=e2e-test"
           health_endpoint="$(terraform output -raw health_endpoint)"
-          #echo "::set-output name=health_endpoint::${health_endpoint}"
-          echo "{health_endpoint}={$health_endpoint}" >> $GITHUB_OUTPUT
+          echo "health_endpoint"=$health_endpoint >> $GITHUB_OUTPUT
       - name: Invoke E2E Test
         working-directory: ./packer-myapp/.github/scripts
         run: ./e2e_test.sh "${{ steps.tf_apply.outputs.health_endpoint }}"
