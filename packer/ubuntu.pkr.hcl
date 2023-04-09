@@ -28,7 +28,7 @@ source "amazon-ebs" "mybase" {
   instance_type  = "t2.nano"
   ssh_username   = "ubuntu"
   ssh_agent_auth = false
-  ami_name       = "{{ image_name }}_{{timestamp}}"
+  ami_name       = "{{var.image_name}}_{{timestamp}}"
   tags = merge(var.default_base_tags, {
     SourceAMIName = "{{ .SourceAMIName }}"
     builddate = formatdate("MMM DD, YYYY", timestamp())
@@ -41,8 +41,8 @@ source "azure-arm" "mybase" {
   image_publisher                   = "Canonical"
   image_sku                         = "22_04-lts"
   location                          = "East US"
-  managed_image_name                = "{{ image_name }}_{{timestamp}}"
-  managed_image_resource_group_name = "{{ image_name }}"
+  managed_image_name                = "{{var.image_name}}_{{timestamp}}"
+  managed_image_resource_group_name = "{{var.image_name}}"
   os_type                           = "Linux"
   vm_size                           = "Standard_DS2_v2"
   subscription_id                   = var.subscription_id

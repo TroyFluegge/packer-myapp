@@ -15,7 +15,7 @@ variable "client_secret" {
 
 variable "image_name" {
     type        = string
-    default   = "hcp-ubuntu-base"
+    default     = "hcp-ubuntu-base"
 }
 
 variable "default_base_tags" {
