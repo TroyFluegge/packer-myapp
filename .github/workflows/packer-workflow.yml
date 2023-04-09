@@ -2,7 +2,7 @@ name: Packer Workflow
 
 on:
   push:
-    branches: [ main, base ]
+    branches: [ base ]
   workflow_dispatch:
 
 env:
@@ -37,11 +37,11 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
 
-      - name: Compile Application
-        env:
-          GOOS: linux
-          GOARCH: amd64 # target architecture is ubuntu on arm64 instances
-        run: go build -o bin/server app/main.go
+      # - name: Compile Application
+      #   env:
+      #     GOOS: linux
+      #     GOARCH: amd64 # target architecture is ubuntu on arm64 instances
+      #   run: go build -o bin/server app/main.go
 
       - name: Packer Init
         working-directory: ./packer
@@ -60,120 +60,120 @@ jobs:
           iteration_id=$(echo "$build" | jq -r '.custom_data.iteration_id')
           echo "iteration_id"=$iteration_id >> $GITHUB_OUTPUT
 
-  test-aws:
-    name: AWS E2E Testing
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v3
-        with:
-          path: packer-myapp
+  # test-aws:
+  #   name: AWS E2E Testing
+  #   needs: build
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Checkout Repository
+  #       uses: actions/checkout@v3
+  #       with:
+  #         path: packer-myapp
 
-      - name: Checkout Repository
-        uses: actions/checkout@v3
-        with:
-          repository: troyfluegge/aws-myapp
-          path: aws-myapp
+  #     - name: Checkout Repository
+  #       uses: actions/checkout@v3
+  #       with:
+  #         repository: troyfluegge/aws-myapp
+  #         path: aws-myapp
 
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v1-node16
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-east-1
+  #     - name: Configure AWS Credentials
+  #       uses: aws-actions/configure-aws-credentials@v1-node16
+  #       with:
+  #         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  #         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  #         aws-region: us-east-1
 
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v2
-        with:
-          terraform_wrapper: false
+  #     - name: Setup Terraform
+  #       uses: hashicorp/setup-terraform@v2
+  #       with:
+  #         terraform_wrapper: false
 
-      - name: Terraform Init
-        working-directory: ./aws-myapp
-        run: terraform init
+  #     - name: Terraform Init
+  #       working-directory: ./aws-myapp
+  #       run: terraform init
 
-      - name: Create Ephemeral Infrastructure
-        id: tf_apply
-        working-directory: ./aws-myapp
-        run: |
-          terraform apply -auto-approve -var="iteration_id=${{ needs.build.outputs.iteration_id }}" -var="prefix=e2e-test"
-          health_endpoint="$(terraform output -raw health_endpoint)"
-          echo "health_endpoint"=$health_endpoint >> $GITHUB_OUTPUT
-      - name: Invoke E2E Test
-        working-directory: ./packer-myapp/.github/scripts
-        run: ./e2e_test.sh "${{ steps.tf_apply.outputs.health_endpoint }}"
+  #     - name: Create Ephemeral Infrastructure
+  #       id: tf_apply
+  #       working-directory: ./aws-myapp
+  #       run: |
+  #         terraform apply -auto-approve -var="iteration_id=${{ needs.build.outputs.iteration_id }}" -var="prefix=e2e-test"
+  #         health_endpoint="$(terraform output -raw health_endpoint)"
+  #         echo "health_endpoint"=$health_endpoint >> $GITHUB_OUTPUT
+  #     - name: Invoke E2E Test
+  #       working-directory: ./packer-myapp/.github/scripts
+  #       run: ./e2e_test.sh "${{ steps.tf_apply.outputs.health_endpoint }}"
 
-      - name: Clean Up Testing Infrastructure
-        if: always() # always run cleanup steps, regardless of E2E test outcomes
-        working-directory: ./aws-myapp
-        run: terraform destroy -auto-approve -var="iteration_id=${{ needs.build.outputs.iteration_id }}" -var="prefix=e2e-test"
+  #     - name: Clean Up Testing Infrastructure
+  #       if: always() # always run cleanup steps, regardless of E2E test outcomes
+  #       working-directory: ./aws-myapp
+  #       run: terraform destroy -auto-approve -var="iteration_id=${{ needs.build.outputs.iteration_id }}" -var="prefix=e2e-test"
 
-  test-azure:
-    name: Azure E2E Testing
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v3
-        with:
-          path: packer-myapp
+  # test-azure:
+  #   name: Azure E2E Testing
+  #   needs: build
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Checkout Repository
+  #       uses: actions/checkout@v3
+  #       with:
+  #         path: packer-myapp
 
-      - name: Checkout Repository
-        uses: actions/checkout@v3
-        with:
-          repository: troyfluegge/azure-myapp
-          path: azure-myapp
+  #     - name: Checkout Repository
+  #       uses: actions/checkout@v3
+  #       with:
+  #         repository: troyfluegge/azure-myapp
+  #         path: azure-myapp
 
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v2
-        with:
-          terraform_wrapper: false
+  #     - name: Setup Terraform
+  #       uses: hashicorp/setup-terraform@v2
+  #       with:
+  #         terraform_wrapper: false
 
-      - name: Terraform Init
-        working-directory: ./azure-myapp
-        run: terraform init
+  #     - name: Terraform Init
+  #       working-directory: ./azure-myapp
+  #       run: terraform init
 
-      - name: Create Ephemeral Infrastructure
-        id: tf_apply
-        working-directory: ./azure-myapp
-        run: |
-          terraform apply -auto-approve -var="iteration_id=${{ needs.build.outputs.iteration_id }}" -var="prefix=e2e-test"
-          health_endpoint="$(terraform output -raw health_endpoint)"
-          echo "health_endpoint"=$health_endpoint >> $GITHUB_OUTPUT
-      - name: Invoke E2E Test
-        working-directory: ./packer-myapp/.github/scripts
-        run: ./e2e_test.sh "${{ steps.tf_apply.outputs.health_endpoint }}"
+  #     - name: Create Ephemeral Infrastructure
+  #       id: tf_apply
+  #       working-directory: ./azure-myapp
+  #       run: |
+  #         terraform apply -auto-approve -var="iteration_id=${{ needs.build.outputs.iteration_id }}" -var="prefix=e2e-test"
+  #         health_endpoint="$(terraform output -raw health_endpoint)"
+  #         echo "health_endpoint"=$health_endpoint >> $GITHUB_OUTPUT
+  #     - name: Invoke E2E Test
+  #       working-directory: ./packer-myapp/.github/scripts
+  #       run: ./e2e_test.sh "${{ steps.tf_apply.outputs.health_endpoint }}"
 
-      - name: Clean Up Testing Infrastructure
-        if: always() # always run cleanup steps, regardless of E2E test outcomes
-        working-directory: ./azure-myapp
-        run: terraform destroy -auto-approve -var="iteration_id=${{ needs.build.outputs.iteration_id }}" -var="prefix=e2e-test"
+  #     - name: Clean Up Testing Infrastructure
+  #       if: always() # always run cleanup steps, regardless of E2E test outcomes
+  #       working-directory: ./azure-myapp
+  #       run: terraform destroy -auto-approve -var="iteration_id=${{ needs.build.outputs.iteration_id }}" -var="prefix=e2e-test"
 
-  promote-dev-staging:
-    name: Promote to Dev and Staging Channels
-    needs: ['build', 'test-aws', 'test-azure'] # this will automatically be skipped if the test job fails
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v3
+  # promote-dev-staging:
+  #   name: Promote to Dev and Staging Channels
+  #   needs: ['build', 'test-aws', 'test-azure'] # this will automatically be skipped if the test job fails
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Checkout Repository
+  #       uses: actions/checkout@v3
 
-      - name: Promote Iteration to Dev
-        working-directory: .github/scripts
-        run: ./set_iteration.sh "hcp-packer-myapp" "development" "${{ needs.build.outputs.iteration_id }}"
+  #     - name: Promote Iteration to Dev
+  #       working-directory: .github/scripts
+  #       run: ./set_iteration.sh "hcp-packer-myapp" "development" "${{ needs.build.outputs.iteration_id }}"
 
-      - name: Promote Iteration to Staging
-        working-directory: .github/scripts
-        run: ./set_iteration.sh "hcp-packer-myapp" "staging" "${{ needs.build.outputs.iteration_id }}"
+  #     - name: Promote Iteration to Staging
+  #       working-directory: .github/scripts
+  #       run: ./set_iteration.sh "hcp-packer-myapp" "staging" "${{ needs.build.outputs.iteration_id }}"
 
-  promote-prod:
-    name: Promote to Production
-    needs: ['build', 'test-aws', 'test-azure', 'promote-dev-staging']
-    environment: production # requires approval
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v3
+  # promote-prod:
+  #   name: Promote to Production
+  #   needs: ['build', 'test-aws', 'test-azure', 'promote-dev-staging']
+  #   environment: production # requires approval
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Checkout Repository
+  #       uses: actions/checkout@v3
 
-      - name: Promote Iteration to Prod
-        working-directory: .github/scripts
-        run: ./set_iteration.sh "hcp-packer-myapp" "production" "${{ needs.build.outputs.iteration_id }}"
+  #     - name: Promote Iteration to Prod
+  #       working-directory: .github/scripts
+  #       run: ./set_iteration.sh "hcp-packer-myapp" "production" "${{ needs.build.outputs.iteration_id }}"

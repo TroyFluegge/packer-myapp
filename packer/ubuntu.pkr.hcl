@@ -22,7 +22,7 @@ data "amazon-ami" "base_image" {
   owners      = ["099720109477"]
 }
 
-source "amazon-ebs" "myapp" {
+source "amazon-ebs" "mybase" {
   region         = "us-east-1"
   source_ami     = data.amazon-ami.base_image.id
   instance_type  = "t2.nano"
@@ -36,7 +36,7 @@ source "amazon-ebs" "myapp" {
   })
 }
 
-source "azure-arm" "myapp" {
+source "azure-arm" "mybase" {
   image_offer                       = "0001-com-ubuntu-server-jammy"
   image_publisher                   = "Canonical"
   image_sku                         = "22_04-lts"
@@ -57,8 +57,8 @@ source "azure-arm" "myapp" {
 
 build {
     hcp_packer_registry {
-      bucket_name = "hcp-packer-myapp"
-      description = "Simple static website"
+      bucket_name = "hcp-ubuntu-base"
+      description = "Simple base image"
 
       bucket_labels = var.default_base_tags
 
@@ -71,14 +71,14 @@ build {
       }
     }
 
-  sources = ["source.amazon-ebs.myapp",
-             "source.azure-arm.myapp"]
+  sources = ["source.amazon-ebs.mybase",
+             "source.azure-arm.mybase"]
 
   // Copy binary to tmp
-  provisioner "file" {
-    source      = "../bin/server"
-    destination = "/tmp/"
-  }
+  # provisioner "file" {
+  #   source      = "../bin/server"
+  #   destination = "/tmp/"
+  # }
 
   provisioner "shell" {
     script = "./scripts/setup.sh"
