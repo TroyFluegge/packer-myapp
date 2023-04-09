@@ -19,7 +19,5 @@ variable "default_base_tags" {
   default = {
     owner   = "SRE Team"
     contact = "sre@mydomain.com"
-    builddate = formatdate("MMM DD, YYYY", timestamp())
-    buildtime = formatdate("HH:mmaa", timestamp())
   }
 }

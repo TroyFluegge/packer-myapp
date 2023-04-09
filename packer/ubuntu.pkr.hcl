@@ -31,6 +31,8 @@ source "amazon-ebs" "myapp" {
   ami_name       = "hcp_packer_demo_app_{{timestamp}}"
   tags = merge(var.default_base_tags, {
     SourceAMIName = "{{ .SourceAMIName }}"
+    builddate = formatdate("MMM DD, YYYY", timestamp())
+    buildtime = formatdate("HH:mmaa", timestamp())
   })
 }
 
@@ -48,6 +50,8 @@ source "azure-arm" "myapp" {
   client_secret                     = var.client_secret
   azure_tags = merge(var.default_base_tags, {
     MyTags = "MyAzureTags"
+    builddate = formatdate("MMM DD, YYYY", timestamp())
+    buildtime = formatdate("HH:mmaa", timestamp())
   })
 }
 
@@ -59,7 +63,8 @@ build {
       bucket_labels = var.default_base_tags
 
       build_labels = {
-        "build-time" = timestamp()
+        "builddate" = formatdate("MMM DD, YYYY", timestamp())
+        "buildtime" = formatdate("HH:mmaa", timestamp())
         "operating-system" = "Ubuntu"
         "operating-system-release" = "22.04"
         #"owner" = "Troy"
