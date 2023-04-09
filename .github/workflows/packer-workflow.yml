@@ -2,7 +2,7 @@ name: Packer Workflow
 
 on:
   push:
-    branches: [ main, Base ]
+    branches: [ main, base ]
   workflow_dispatch:
 
 env:
