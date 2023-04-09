@@ -67,28 +67,15 @@ build {
         "buildtime" = formatdate("HH:mmaa", timestamp())
         "operating-system" = "Ubuntu"
         "operating-system-release" = "22.04"
-        #"owner" = "Troy"
+        "owner"   = "SRE Team"
+        "contact" = "sre@mydomain.com"
       }
     }
 
   sources = ["source.amazon-ebs.mybase",
              "source.azure-arm.mybase"]
 
-  // Copy binary to tmp
-  # provisioner "file" {
-  #   source      = "../bin/server"
-  #   destination = "/tmp/"
-  # }
-
   provisioner "shell" {
     script = "./scripts/setup.sh"
-  }
-
-  post-processor "manifest" {
-    output     = "packer_manifest.json"
-    strip_path = true
-    custom_data = {
-      iteration_id = packer.iterationID
-    }
   }
 }
