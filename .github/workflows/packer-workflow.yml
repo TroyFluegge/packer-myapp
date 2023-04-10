@@ -40,7 +40,7 @@ jobs:
       - name: Compile Application
         env:
           GOOS: linux
-          GOARCH: amd64 # target architecture is ubuntu on arm64 instances
+          GOARCH: amd64 # target architecture is ubuntu on amd64 instances
         run: go build -o bin/server app/main.go
 
       - name: Packer Init
