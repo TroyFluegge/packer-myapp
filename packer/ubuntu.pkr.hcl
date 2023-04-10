@@ -12,19 +12,38 @@ packer {
   }
 }
 
-data "amazon-ami" "base_image" {
+# data "amazon-ami" "base_image" {
+#   region = "us-east-1"
+#   filters = {
+#     name             = "ubuntu/images/hvm-ssd/ubuntu-jammy-22.04-amd64-server-*"
+#     root-device-type = "ebs"
+#   }
+#   most_recent = true
+#   owners      = ["099720109477"]
+# }
+
+data "hcp-packer-iteration" "base-ubuntu" {
+  bucket_name = "hcp-ubuntu-base"
+  channel = "production"
+}
+
+data "hcp-packer-image" "aws" {
+  bucket_name = data.hcp-packer-iteration.base-ubuntu.bucket_name
+  iteration_id = data.hcp-packer-iteration.base-ubuntu.id
+  cloud_provider = "aws"
   region = "us-east-1"
-  filters = {
-    name             = "ubuntu/images/hvm-ssd/ubuntu-jammy-22.04-amd64-server-*"
-    root-device-type = "ebs"
-  }
-  most_recent = true
-  owners      = ["099720109477"]
+}
+
+data "hcp-packer-image" "azure" {
+  bucket_name = data.hcp-packer-iteration.base-ubuntu.bucket_name
+  iteration_id = data.hcp-packer-iteration.base-ubuntu.id
+  cloud_provider = "azure"
+  region = "East US"
 }
 
 source "amazon-ebs" "myapp" {
   region         = "us-east-1"
-  source_ami     = data.amazon-ami.base_image.id
+  source_ami     = data.hcp-packer-image.aws.id
   instance_type  = "t2.nano"
   ssh_username   = "ubuntu"
   ssh_agent_auth = false
@@ -37,12 +56,17 @@ source "amazon-ebs" "myapp" {
 }
 
 source "azure-arm" "myapp" {
-  image_offer                       = "0001-com-ubuntu-server-jammy"
-  image_publisher                   = "Canonical"
-  image_sku                         = "22_04-lts"
+  #image_offer                       = "0001-com-ubuntu-server-jammy"
+  #image_publisher                   = "Canonical"
+  #image_sku                         = "22_04-lts"
   location                          = "East US"
+  
+  custom_managed_image_name         = data.hcp-packer-image.azure.labels.managed_image_name
+  custom_managed_image_resource_group_name = data.hcp-packer-image.azure.labels.managed_image_resourcegroup_name
+
   managed_image_name                = "${var.image_name}_{{timestamp}}"
   managed_image_resource_group_name = "${var.image_name}"
+  
   os_type                           = "Linux"
   vm_size                           = "Standard_DS2_v2"
   subscription_id                   = var.subscription_id
