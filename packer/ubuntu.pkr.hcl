@@ -43,7 +43,7 @@ source "amazon-ebs" "myapp" {
     builddate = formatdate("MMM DD, YYYY", timestamp())
     buildtime = formatdate("HH:mmaa", timestamp())
     SourceImage = data.hcp-packer-iteration.base-ubuntu.bucket_name
-    SourceImageChannel = data.hcp-packer-iteration.base-ubuntu.channel
+    SourceImageChannel = data.hcp-packer-iteration.base-ubuntu.channel_id
     SourceImageIteration = data.hcp-packer-iteration.base-ubuntu.id
   })
 }
@@ -69,7 +69,7 @@ source "azure-arm" "myapp" {
     builddate = formatdate("MMM DD, YYYY", timestamp())
     buildtime = formatdate("HH:mmaa", timestamp())
     SourceImage = data.hcp-packer-iteration.base-ubuntu.bucket_name
-    SourceImageChannel = data.hcp-packer-iteration.base-ubuntu.channel
+    SourceImageChannel = data.hcp-packer-iteration.base-ubuntu.channel_id
     SourceImageIteration = data.hcp-packer-iteration.base-ubuntu.id
   })
 }
