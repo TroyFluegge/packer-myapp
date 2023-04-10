@@ -42,7 +42,6 @@ source "amazon-ebs" "myapp" {
     SourceAMIName = "{{ .SourceAMIName }}"
     builddate = formatdate("MMM DD, YYYY", timestamp())
     buildtime = formatdate("HH:mmaa", timestamp())
-    SourceImage = data.hcp-packer-iteration.base-ubuntu.bucket_name
     SourceImageChannel = data.hcp-packer-iteration.base-ubuntu.channel_id
     SourceImageIteration = data.hcp-packer-iteration.base-ubuntu.id
   })
@@ -65,7 +64,7 @@ source "azure-arm" "myapp" {
   managed_image_resource_group_name = "${var.image_name}"
   
   azure_tags = merge(var.default_base_tags, {
-    MyTags = "MyAzureTags"
+    SourceImageName = "{{ .SourceImageName }}"
     builddate = formatdate("MMM DD, YYYY", timestamp())
     buildtime = formatdate("HH:mmaa", timestamp())
     SourceImage = data.hcp-packer-iteration.base-ubuntu.bucket_name
