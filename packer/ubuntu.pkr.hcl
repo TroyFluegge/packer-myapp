@@ -12,16 +12,6 @@ packer {
   }
 }
 
-# data "amazon-ami" "base_image" {
-#   region = "us-east-1"
-#   filters = {
-#     name             = "ubuntu/images/hvm-ssd/ubuntu-jammy-22.04-amd64-server-*"
-#     root-device-type = "ebs"
-#   }
-#   most_recent = true
-#   owners      = ["099720109477"]
-# }
-
 data "hcp-packer-iteration" "base-ubuntu" {
   bucket_name = "hcp-ubuntu-base"
   channel = "production"
@@ -56,22 +46,21 @@ source "amazon-ebs" "myapp" {
 }
 
 source "azure-arm" "myapp" {
-  #image_offer                       = "0001-com-ubuntu-server-jammy"
-  #image_publisher                   = "Canonical"
-  #image_sku                         = "22_04-lts"
   location                          = "East US"
-  
-  custom_managed_image_name         = data.hcp-packer-image.azure.labels.managed_image_name
-  custom_managed_image_resource_group_name = data.hcp-packer-image.azure.labels.managed_image_resourcegroup_name
-
-  managed_image_name                = "${var.image_name}_{{timestamp}}"
-  managed_image_resource_group_name = "${var.image_name}"
-  
   os_type                           = "Linux"
   vm_size                           = "Standard_DS2_v2"
   subscription_id                   = var.subscription_id
   client_id                         = var.client_id
   client_secret                     = var.client_secret
+
+  # Source Image
+  custom_managed_image_name         = data.hcp-packer-image.azure.labels.managed_image_name
+  custom_managed_image_resource_group_name = data.hcp-packer-image.azure.labels.managed_image_resourcegroup_name
+  
+  # Destination Image
+  managed_image_name                = "${var.image_name}_{{timestamp}}"
+  managed_image_resource_group_name = "${var.image_name}"
+  
   azure_tags = merge(var.default_base_tags, {
     MyTags = "MyAzureTags"
     builddate = formatdate("MMM DD, YYYY", timestamp())
@@ -91,7 +80,6 @@ build {
         "buildtime" = formatdate("HH:mmaa", timestamp())
         "operating-system" = "Ubuntu"
         "operating-system-release" = "22.04"
-        #"owner" = "Troy"
       }
     }
 
