@@ -64,10 +64,9 @@ source "azure-arm" "myapp" {
   managed_image_resource_group_name = "${var.image_name}"
   
   azure_tags = merge(var.default_base_tags, {
-    SourceImageName = "{{ .SourceImageName }}"
+    SourceImageName = data.hcp-packer-image.azure.labels.managed_image_name
     builddate = formatdate("MMM DD, YYYY", timestamp())
     buildtime = formatdate("HH:mmaa", timestamp())
-    SourceImage = data.hcp-packer-iteration.base-ubuntu.bucket_name
     SourceImageChannel = data.hcp-packer-iteration.base-ubuntu.channel_id
     SourceImageIteration = data.hcp-packer-iteration.base-ubuntu.id
   })
