@@ -57,7 +57,7 @@ source "azure-arm" "mybase" {
 
 build {
     hcp_packer_registry {
-      bucket_name = "hcp-ubuntu-base"
+      bucket_name = var.image_name
       description = "Simple base image"
 
       bucket_labels = var.default_base_tags
