@@ -43,6 +43,7 @@ source "azure-arm" "mybase" {
   location                          = "East US"
   managed_image_name                = "${var.image_name}_{{timestamp}}"
   managed_image_resource_group_name = "${var.image_name}"
+  build_resource_group_name         = "${var.image_name}"
   os_type                           = "Linux"
   vm_size                           = "Standard_DS2_v2"
   subscription_id                   = var.subscription_id
