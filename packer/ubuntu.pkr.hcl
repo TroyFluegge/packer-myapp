@@ -72,9 +72,8 @@ build {
         "contact" = "sre@mydomain.com"
       }
     }
-
-  sources = ["source.amazon-ebs.mybase",
-             "source.azure-arm.mybase"]
+#"source.amazon-ebs.mybase"
+  sources = ["source.azure-arm.mybase"]
 
   provisioner "shell" {
     script = "./scripts/setup.sh"
