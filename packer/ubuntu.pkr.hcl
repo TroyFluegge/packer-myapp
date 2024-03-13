@@ -37,7 +37,7 @@ source "amazon-ebs" "mybase" {
 }
 
 source "azure-arm" "mybase" {
-  image_offer                       = "0001-com-ubuntu-server-jammy"
+  image_offer                       = "0001-com-ubuntu-server-jammy-daily"
   image_publisher                   = "Canonical"
   image_sku                         = "22_04-lts"
   location                          = "East US"
