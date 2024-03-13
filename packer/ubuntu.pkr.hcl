@@ -37,7 +37,7 @@ source "amazon-ebs" "mybase" {
 }
 
 source "azure-arm" "mybase" {
-  image_offer                       = "UbuntuServer"
+  image_offer                       = "Ubuntu"
   image_publisher                   = "Canonical"
   image_sku                         = "23_04-lts"
   location                          = "East US"
