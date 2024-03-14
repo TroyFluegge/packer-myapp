@@ -15,7 +15,7 @@ packer {
 data "amazon-ami" "base_image" {
   region = "us-east-1"
   filters = {
-    name             = "ubuntu/images/hvm-ssd/ubuntu-jammy-22.04-amd64-server-*"
+    name             = "ubuntu/images/hvm-ssd/ubuntu-lunar-23.04-amd64-server-*"
     root-device-type = "ebs"
   }
   most_recent = true
