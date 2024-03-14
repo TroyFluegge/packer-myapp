@@ -83,7 +83,7 @@ build {
         "builddate" = formatdate("MMM DD, YYYY", timestamp())
         "buildtime" = formatdate("HH:mmaa", timestamp())
         "operating-system" = "Ubuntu"
-        "operating-system-release" = "22.04"
+        "operating-system-release" = "23.04"
       }
     }
 
