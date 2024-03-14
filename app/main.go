@@ -10,12 +10,12 @@ func main() {
 	log.Print("Starting up!")
 
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprint(w, "Hello world! v2.3")
+		fmt.Fprint(w, "Hello world! v2.4")
 	})
 
 	// a truly basic health endpoint
 	http.HandleFunc("/healthz", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprint(w, "looks good")
+		fmt.Fprint(w, "looks good v2.4")
 	})
 
 	log.Fatal(http.ListenAndServe(":8080", nil))
