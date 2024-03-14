@@ -39,7 +39,7 @@ source "amazon-ebs" "mybase" {
 source "azure-arm" "mybase" {
   image_offer                       = "0001-com-ubuntu-server-lunar"
   image_publisher                   = "Canonical"
-  image_sku                         = "23_04-lts-gen2"
+  image_sku                         = "23_04-gen2"
   location                          = "East US"
   managed_image_name                = "${var.image_name}_{{timestamp}}"
   managed_image_resource_group_name = "${var.image_name}"
